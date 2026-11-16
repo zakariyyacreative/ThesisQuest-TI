@@ -1,0 +1,2018 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>SkripsiQuest TI — Ide, Korektor Judul & Detektor Watermark AI</title>
+  <meta name="theme-color" content="#0B0D21" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+  <!-- PWA Web App Manifest via Data URI -->
+  <link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22SkripsiQuest%20TI%22%2C%22short_name%22%3A%22SkripsiQuest%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230B0D21%22%2C%22theme_color%22%3A%22%230B0D21%22%2C%22description%22%3A%22Platform%20Ide%2C%20Korektor%20Judul%20Skripsi%20S1%20TI%20%26%20Detektor%20Watermark%20AI%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fplacehold.co%2F192x192%2F161B3D%2FFACC15.png%3Ftext%3DSQ%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fpng%22%7D%2C%7B%22src%22%3A%22https%3A%2F%2Fplacehold.co%2F512x512%2F161B3D%2FFACC15.png%3Ftext%3DSQ%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fpng%22%7D%5D%7D" />
+
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            cosmic: {
+              bg: '#0B0D21',
+              card: '#161B3D',
+              accent: '#FACC15',
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* Full-Page Blogger Overlay & Cosmic Styling */
+    #skripsiquest-root {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background-color: #0B0D21;
+      background-image:
+        radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.16) 0%, transparent 40%),
+        radial-gradient(circle at 85% 20%, rgba(236, 72, 153, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 50% 85%, rgba(79, 70, 229, 0.14) 0%, transparent 50%);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #FFFFFF;
+    }
+
+    /* Custom Scrollbar */
+    #skripsiquest-root::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    #skripsiquest-root::-webkit-scrollbar-track {
+      background: #0B0D21;
+    }
+    #skripsiquest-root::-webkit-scrollbar-thumb {
+      background: rgba(99, 102, 241, 0.4);
+      border-radius: 9999px;
+    }
+    #skripsiquest-root::-webkit-scrollbar-thumb:hover {
+      background: rgba(250, 204, 21, 0.6);
+    }
+
+    .glass-card {
+      background: rgba(22, 27, 61, 0.78);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .glass-card-hover {
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .glass-card-hover:hover {
+      transform: translateY(-3px);
+      border-color: rgba(250, 204, 21, 0.35);
+      box-shadow: 0 12px 30px -10px rgba(99, 102, 241, 0.28);
+    }
+
+    .cosmic-glow-btn {
+      box-shadow: 0 0 20px rgba(250, 204, 21, 0.3);
+      transition: all 0.2s ease;
+    }
+    .cosmic-glow-btn:hover {
+      box-shadow: 0 0 28px rgba(250, 204, 21, 0.55);
+      transform: translateY(-1px);
+    }
+
+    @keyframes pulseSlow {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
+    .animate-pulse-slow {
+      animation: pulseSlow 3s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-[#0B0D21] text-white antialiased selection:bg-yellow-400 selection:text-slate-950">
+
+  <!-- Full-Page Blogger Overlay Container -->
+  <div id="skripsiquest-root">
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-[1000005] flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+    <!-- Custom Confirmation Modal (Pengganti confirm() bawaan browser) -->
+    <div id="confirm-modal" class="hidden fixed inset-0 z-[1000004] bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="glass-card rounded-3xl max-w-md w-full p-6 border border-white/15 shadow-2xl">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="p-2.5 rounded-xl bg-amber-500/20 text-amber-400">
+            <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+          </div>
+          <h3 id="confirm-title" class="text-lg font-bold text-white">Konfirmasi Tindakan</h3>
+        </div>
+        <p id="confirm-message" class="text-sm text-slate-300 mb-6 leading-relaxed">Apakah Anda yakin ingin melanjutkan?</p>
+        <div class="flex items-center justify-end gap-3">
+          <button id="confirm-cancel-btn" class="px-5 py-2.5 rounded-full border border-white/20 text-sm font-semibold text-slate-300 hover:bg-white/10 transition">
+            Batal
+          </button>
+          <button id="confirm-ok-btn" class="px-5 py-2.5 rounded-full bg-rose-500 hover:bg-rose-600 text-white text-sm font-bold transition">
+            Ya, Lanjutkan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview Mode Banner (Hanya muncul jika IS_PREVIEW === true) -->
+    <div id="preview-banner" class="hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white text-xs font-semibold py-2 px-4 text-center flex items-center justify-center gap-2 shadow-md">
+      <span class="inline-flex items-center gap-1.5 bg-black/30 px-2.5 py-0.5 rounded-full text-yellow-300 font-bold">
+        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> MODE PREVIEW AKTIF
+      </span>
+      <span class="hidden sm:inline">Menggunakan simulasi data lokal. Ubah <code class="bg-black/30 px-1.5 py-0.5 rounded">IS_PREVIEW = true</code> untuk koneksi penuh ke Supabase.</span>
+    </div>
+
+    <!-- ==================== VIEW 1: AUTH / LOGIN & 2FA SCREEN ==================== -->
+    <section id="auth-view" class="min-h-screen flex items-center justify-center p-4 sm:p-6">
+      <div class="max-w-5xl w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+        
+        <!-- Left Hero Promo Panel (Referensi UI Galaxy Quest) -->
+        <div class="lg:col-span-6 space-y-6 text-center lg:text-left">
+          <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full glass-card border border-indigo-400/30">
+            <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center text-slate-950 font-extrabold">
+              <i data-lucide="rocket" class="w-4 h-4"></i>
+            </div>
+            <span class="text-sm font-bold tracking-wide text-white">SkripsiQuest <span class="text-yellow-400">TI</span></span>
+          </div>
+
+          <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+            Rancang Judul <span class="text-yellow-400">Skripsi TI</span> &amp; Bebas <span class="bg-gradient-to-r from-indigo-400 to-pink-400 bg-clip-text text-transparent">Watermark AI</span>
+          </h1>
+
+          <p class="text-slate-400 text-sm sm:text-base leading-relaxed max-w-xl mx-auto lg:mx-0">
+            Asisten cerdas untuk mahasiswa S1 Teknik Informatika dalam menyusun ide judul penelitian, mengevaluasi kelayakan metode, mendeteksi jejak karakter tersembunyi AI, serta dilengkapi keamanan berlapis 2FA/MFA.
+          </p>
+
+          <!-- Feature Badges -->
+          <div class="grid grid-cols-3 gap-3 max-w-lg mx-auto lg:mx-0">
+            <div class="glass-card rounded-2xl p-3 text-center">
+              <div class="w-9 h-9 mx-auto mb-2 rounded-xl bg-yellow-400/15 text-yellow-400 flex items-center justify-center">
+                <i data-lucide="lightbulb" class="w-5 h-5"></i>
+              </div>
+              <p class="text-xs font-bold text-white">Ide Judul TI</p>
+              <p class="text-[11px] text-slate-400">5 Peminatan</p>
+            </div>
+            <div class="glass-card rounded-2xl p-3 text-center">
+              <div class="w-9 h-9 mx-auto mb-2 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
+                <i data-lucide="scan-search" class="w-5 h-5"></i>
+              </div>
+              <p class="text-xs font-bold text-white">Detektor AI</p>
+              <p class="text-[11px] text-slate-400">Zero-Width Scan</p>
+            </div>
+            <div class="glass-card rounded-2xl p-3 text-center">
+              <div class="w-9 h-9 mx-auto mb-2 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                <i data-lucide="shield-check" class="w-5 h-5"></i>
+              </div>
+              <p class="text-xs font-bold text-white">Keamanan 2FA</p>
+              <p class="text-[11px] text-slate-400">TOTP &amp; PIN</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Login / 2FA Card -->
+        <div class="lg:col-span-6">
+          <div class="glass-card rounded-3xl p-6 sm:p-8 shadow-2xl border border-white/15 relative overflow-hidden">
+            <div class="absolute -top-24 -right-24 w-48 h-48 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-yellow-400/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <!-- STEP A: Primary Credentials Form -->
+            <div id="login-step-credentials">
+              <div class="mb-6">
+                <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">Portal Akses Terpadu</span>
+                <h2 class="text-2xl font-extrabold text-white mt-1">Masuk ke Dashboard</h2>
+              </div>
+
+              <!-- Role Switcher Tabs -->
+              <div class="grid grid-cols-2 gap-2 p-1.5 rounded-full bg-[#0B0D21]/80 border border-white/10 mb-6">
+                <button type="button" id="tab-role-mahasiswa" class="py-2.5 px-4 rounded-full text-xs sm:text-sm font-bold transition bg-yellow-400 text-slate-950 shadow">
+                  Mahasiswa S1 TI
+                </button>
+                <button type="button" id="tab-role-admin" class="py-2.5 px-4 rounded-full text-xs sm:text-sm font-bold transition text-slate-300 hover:text-white">
+                  Admin / Dosen
+                </button>
+              </div>
+
+              <!-- Form Mahasiswa (NIM + Password) -->
+              <form id="form-login-mahasiswa" class="space-y-4">
+                <div>
+                  <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">NIM Mahasiswa</label>
+                  <div class="relative">
+                    <i data-lucide="id-card" class="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2"></i>
+                    <input type="text" id="mhs-nim" required placeholder="Contoh: 210411100101" class="w-full pl-11 pr-4 py-3 rounded-2xl bg-[#0B0D21]/80 border border-white/15 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-yellow-400 transition" />
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Kata Sandi</label>
+                  <div class="relative">
+                    <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2"></i>
+                    <input type="password" id="mhs-password" required placeholder="Masukkan kata sandi akun" class="w-full pl-11 pr-4 py-3 rounded-2xl bg-[#0B0D21]/80 border border-white/15 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-yellow-400 transition" />
+                  </div>
+                </div>
+                <button type="submit" id="btn-submit-mhs" class="w-full py-3.5 px-6 rounded-full bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-extrabold text-sm cosmic-glow-btn flex items-center justify-center gap-2 mt-2">
+                  <span>Mulai Misi Skripsi</span>
+                  <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+              </form>
+
+              <!-- Form Admin (Supabase Auth Email + Password) -->
+              <form id="form-login-admin" class="space-y-4 hidden">
+                <div>
+                  <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Email Dosen / Admin</label>
+                  <div class="relative">
+                    <i data-lucide="mail" class="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2"></i>
+                    <input type="email" id="admin-email" required placeholder="zakariyyacreative@gmail.com" class="w-full pl-11 pr-4 py-3 rounded-2xl bg-[#0B0D21]/80 border border-white/15 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-yellow-400 transition" />
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Kata Sandi</label>
+                  <div class="relative">
+                    <i data-lucide="key-round" class="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2"></i>
+                    <input type="password" id="admin-password" required placeholder="sayang@123" class="w-full pl-11 pr-4 py-3 rounded-2xl bg-[#0B0D21]/80 border border-white/15 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-yellow-400 transition" />
+                  </div>
+                </div>
+                <button type="submit" id="btn-submit-admin" class="w-full py-3.5 px-6 rounded-full bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-extrabold text-sm cosmic-glow-btn flex items-center justify-center gap-2 mt-2">
+                  <span>Masuk sebagai Admin</span>
+                  <i data-lucide="shield" class="w-4 h-4"></i>
+                </button>
+              </form>
+
+              <!-- Quick Login Section (HANYA MUNCUL JIKA IS_PREVIEW === true) -->
+              <div id="preview-quick-login" class="hidden mt-6 pt-5 border-t border-white/10">
+                <p class="text-[11px] font-bold uppercase tracking-wider text-indigo-300 mb-3 text-center">Pintasan Mode Preview</p>
+                <div class="grid grid-cols-2 gap-3">
+                  <button type="button" id="quick-login-mhs" class="py-2.5 px-3 rounded-full border border-white/20 hover:border-yellow-400/60 bg-white/5 hover:bg-white/10 text-xs font-bold text-white flex items-center justify-center gap-1.5 transition">
+                    <i data-lucide="graduation-cap" class="w-4 h-4 text-yellow-400"></i>
+                    <span>Cepat Mahasiswa</span>
+                  </button>
+                  <button type="button" id="quick-login-admin" class="py-2.5 px-3 rounded-full border border-white/20 hover:border-indigo-400/60 bg-white/5 hover:bg-white/10 text-xs font-bold text-white flex items-center justify-center gap-1.5 transition">
+                    <i data-lucide="shield-alert" class="w-4 h-4 text-indigo-400"></i>
+                    <span>Cepat Admin</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- STEP B: 2FA / MFA Challenge Verification -->
+            <div id="login-step-2fa" class="hidden space-y-5">
+              <div class="flex items-center gap-3">
+                <div class="p-3 rounded-2xl bg-indigo-500/20 text-indigo-400">
+                  <i data-lucide="smartphone-nfc" class="w-7 h-7"></i>
+                </div>
+                <div>
+                  <span class="text-xs font-bold uppercase tracking-wider text-yellow-400">Verifikasi Keamanan 2FA</span>
+                  <h2 class="text-xl font-extrabold text-white">Autentikasi Dua Faktor</h2>
+                </div>
+              </div>
+
+              <p id="mfa-challenge-desc" class="text-sm text-slate-300 leading-relaxed">
+                Akun ini dilindungi oleh 2FA/MFA. Masukkan 6-digit kode autentikator atau PIN keamanan Anda untuk melanjutkan ke dashboard.
+              </p>
+
+              <form id="form-verify-2fa" class="space-y-4">
+                <div>
+                  <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Kode Verifikasi 6-Digit</label>
+                  <input type="text" id="input-2fa-code" maxlength="6" pattern="[0-9]{6}" required placeholder="000000" class="w-full text-center tracking-[0.5em] text-2xl font-extrabold py-3.5 px-4 rounded-2xl bg-[#0B0D21]/90 border border-indigo-400/40 text-yellow-400 focus:outline-none focus:border-yellow-400" />
+                </div>
+                <div class="flex gap-3">
+                  <button type="button" id="btn-cancel-2fa" class="w-1/3 py-3 px-4 rounded-full border border-white/20 text-xs font-bold text-slate-300 hover:bg-white/10 transition">
+                    Kembali
+                  </button>
+                  <button type="submit" id="btn-verify-2fa" class="w-2/3 py-3 px-6 rounded-full bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-extrabold text-sm cosmic-glow-btn">
+                    Verifikasi &amp; Masuk
+                  </button>
+                </div>
+              </form>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 2: MAIN APPLICATION DASHBOARD ==================== -->
+    <div id="app-view" class="hidden min-h-screen flex flex-col md:flex-row">
+      
+      <!-- DESKTOP FIXED SIDEBAR -->
+      <aside class="hidden md:flex md:w-72 md:flex-col md:fixed md:inset-y-0 z-30 glass-card border-r border-white/10">
+        <!-- Brand Header -->
+        <div class="p-6 flex items-center gap-3 border-b border-white/10">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center text-slate-950 font-extrabold shadow-lg">
+            <i data-lucide="rocket" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h1 class="text-lg font-extrabold tracking-tight text-white leading-none">SkripsiQuest <span class="text-yellow-400">TI</span></h1>
+            <span class="text-[11px] font-medium text-slate-400">S1 Teknik Informatika</span>
+          </div>
+        </div>
+
+        <!-- User Profile Pill -->
+        <div class="px-4 pt-5">
+          <div class="p-3.5 rounded-2xl bg-[#0B0D21]/70 border border-white/10 flex items-center gap-3">
+            <div id="sidebar-avatar" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center font-extrabold text-sm text-white shrink-0">
+              MH
+            </div>
+            <div class="min-w-0 flex-1">
+              <p id="sidebar-user-name" class="text-sm font-bold text-white truncate">Mahasiswa TI</p>
+              <div class="flex items-center gap-1.5 mt-0.5">
+                <span id="sidebar-user-role" class="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300">Mahasiswa</span>
+                <span id="sidebar-2fa-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400">2FA ON</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="flex-1 px-4 py-5 space-y-1.5 overflow-y-auto">
+          <button data-nav="dashboard" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition bg-yellow-400 text-slate-950">
+            <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+            <span>Dashboard Overview</span>
+          </button>
+          <button data-nav="generator" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold text-slate-300 hover:bg-white/10 hover:text-white transition">
+            <i data-lucide="sparkles" class="w-4 h-4 text-yellow-400"></i>
+            <span>Ide Judul Skripsi TI</span>
+          </button>
+          <button data-nav="korektor" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold text-slate-300 hover:bg-white/10 hover:text-white transition">
+            <i data-lucide="file-check-2" class="w-4 h-4 text-indigo-400"></i>
+            <span>Korektor &amp; Skor Judul</span>
+          </button>
+          <button data-nav="detektor" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold text-slate-300 hover:bg-white/10 hover:text-white transition">
+            <i data-lucide="scan-line" class="w-4 h-4 text-pink-400"></i>
+            <span>Detektor Watermark AI</span>
+          </button>
+          <button data-nav="keamanan" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold text-slate-300 hover:bg-white/10 hover:text-white transition">
+            <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
+            <span>Keamanan 2FA / MFA</span>
+          </button>
+          <button id="nav-admin-panel" data-nav="admin" class="nav-item hidden w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold text-slate-300 hover:bg-white/10 hover:text-white transition">
+            <i data-lucide="users" class="w-4 h-4 text-amber-400"></i>
+            <span>Manajemen Mahasiswa</span>
+          </button>
+        </nav>
+
+        <!-- Logout Button -->
+        <div class="p-4 border-t border-white/10">
+          <button id="btn-logout-desktop" class="w-full py-2.5 px-4 rounded-full border border-rose-500/30 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 text-xs font-bold flex items-center justify-center gap-2 transition">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+            <span>Keluar dari Sesi</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- MAIN CONTENT AREA -->
+      <main class="flex-1 md:pl-72 pb-24 md:pb-10">
+        <!-- Mobile Top Header -->
+        <header class="md:hidden sticky top-0 z-20 glass-card border-b border-white/10 px-4 py-3 flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-yellow-400 flex items-center justify-center text-slate-950 font-extrabold">
+              <i data-lucide="rocket" class="w-4 h-4"></i>
+            </div>
+            <span class="font-extrabold text-base text-white">SkripsiQuest <span class="text-yellow-400">TI</span></span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="mobile-2fa-status" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400">2FA</span>
+            <button id="btn-logout-mobile" class="p-2 rounded-full bg-rose-500/15 text-rose-400">
+              <i data-lucide="log-out" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </header>
+
+        <div class="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+
+          <!-- ==================== TAB 1: DASHBOARD OVERVIEW ==================== -->
+          <div id="section-dashboard" class="app-section space-y-6">
+            <!-- Hero Banner (Inspired by Galaxy Quest Reference) -->
+            <div class="rounded-3xl bg-gradient-to-r from-indigo-600 via-purple-700 to-indigo-900 p-6 sm:p-8 border border-white/15 shadow-2xl relative overflow-hidden">
+              <div class="absolute right-0 bottom-0 opacity-15 pointer-events-none">
+                <i data-lucide="orbit" class="w-56 h-56 text-white -mr-10 -mb-10"></i>
+              </div>
+              <div class="relative z-10 max-w-2xl space-y-3">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/30 text-yellow-300 text-xs font-bold uppercase tracking-wider">
+                  <i data-lucide="zap" class="w-3.5 h-3.5"></i> Pusat Kendali Skripsi S1 TI
+                </span>
+                <h2 class="text-2xl sm:text-4xl font-extrabold text-white leading-tight">
+                  Selamat Datang, <span id="hero-user-name" class="text-yellow-400">Pejuang Skripsi!</span>
+                </h2>
+                <p class="text-indigo-100 text-sm sm:text-base leading-relaxed">
+                  Eksplorasi ide penelitian Teknik Informatika berbasis tren terbaru, uji kelayakan struktur judul Anda, dan pastikan naskah bebas dari jejak watermark AI tersembunyi.
+                </p>
+                <div class="pt-2 flex flex-wrap gap-3">
+                  <button onclick="switchTab('generator')" class="px-6 py-3 rounded-full bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-extrabold text-xs sm:text-sm cosmic-glow-btn flex items-center gap-2">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                    <span>Buat Ide Judul Sekarang</span>
+                  </button>
+                  <button onclick="switchTab('detektor')" class="px-6 py-3 rounded-full border border-white/30 bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm flex items-center gap-2 transition">
+                    <i data-lucide="scan-line" class="w-4 h-4"></i>
+                    <span>Pindai Watermark AI</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3 Stat Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+              <div class="glass-card glass-card-hover rounded-2xl p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Aktivitas</span>
+                  <div class="p-2.5 rounded-xl bg-yellow-400/15 text-yellow-400">
+                    <i data-lucide="folder-kanban" class="w-5 h-5"></i>
+                  </div>
+                </div>
+                <p id="stat-total-riwayat" class="text-3xl font-extrabold text-white">0</p>
+                <p class="text-xs text-slate-400 mt-1">Judul &amp; naskah dianalisis</p>
+              </div>
+
+              <div class="glass-card glass-card-hover rounded-2xl p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Rata-Rata Skor</span>
+                  <div class="p-2.5 rounded-xl bg-indigo-500/20 text-indigo-400">
+                    <i data-lucide="award" class="w-5 h-5"></i>
+                  </div>
+                </div>
+                <p id="stat-avg-score" class="text-3xl font-extrabold text-white">0%</p>
+                <p class="text-xs text-slate-400 mt-1">Kelayakan judul &amp; orisinalitas</p>
+              </div>
+
+              <div class="glass-card glass-card-hover rounded-2xl p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Proteksi 2FA / MFA</span>
+                  <div class="p-2.5 rounded-xl bg-emerald-500/20 text-emerald-400">
+                    <i data-lucide="shield-check" class="w-5 h-5"></i>
+                  </div>
+                </div>
+                <p id="stat-mfa-status" class="text-2xl font-extrabold text-emerald-400">Aktif</p>
+                <button onclick="switchTab('keamanan')" class="text-xs text-yellow-400 hover:underline mt-1 inline-flex items-center gap-1 font-semibold">
+                  Kelola Keamanan <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Recent History List -->
+            <div class="glass-card rounded-3xl p-6">
+              <div class="flex items-center justify-between mb-5">
+                <div>
+                  <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">Log Penelitian</span>
+                  <h3 class="text-lg font-extrabold text-white">Riwayat Analisis Terbaru</h3>
+                </div>
+                <button id="btn-refresh-history" class="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 transition" title="Muat Ulang">
+                  <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                </button>
+              </div>
+
+              <div id="dashboard-history-list" class="space-y-3">
+                <!-- Diisi dinamis oleh JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- ==================== TAB 2: IDE & GENERATOR JUDUL SKRIPSI TI ==================== -->
+          <div id="section-generator" class="app-section hidden space-y-6">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-yellow-400">Eksplorasi Topik Penelitian</span>
+              <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Generator Ide Judul Skripsi S1 TI</h2>
+              <p class="text-sm text-slate-400 mt-1">Pilih bidang peminatan Informatika dan masukkan objek studi kasus untuk mendapatkan 3 rancangan judul beserta metode rekomendasinya.</p>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 space-y-5">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                  <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Bidang Peminatan S1 TI</label>
+                  <select id="gen-peminatan" class="w-full px-4 py-3.5 rounded-2xl bg-[#0B0D21] border border-white/15 text-sm text-white focus:outline-none focus:border-yellow-400">
+                    <option value="AI & Machine Learning">Artificial Intelligence &amp; Machine Learning</option>
+                    <option value="Web & Mobile Engineering">Web, Mobile &amp; Software Engineering</option>
+                    <option value="Cyber Security & Jaringan">Cyber Security, Kriptografi &amp; Jaringan</option>
+                    <option value="Internet of Things (IoT)">Internet of Things (IoT) &amp; Embedded System</option>
+                    <option value="Data Science & Big Data">Data Science, Data Mining &amp; Big Data</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Objek / Studi Kasus / Masalah Spesifik</label>
+                  <input type="text" id="gen-objek" placeholder="Contoh: Deteksi Penyakit Daun Padi / E-Commerce UMKM / Keamanan API" class="w-full px-4 py-3.5 rounded-2xl bg-[#0B0D21] border border-white/15 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-yellow-400" />
+                </div>
+              </div>
+
+              <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+                <p class="text-xs text-slate-400">Menghasilkan struktur judul standar akademik (Metode + Objek + Tujuan/Evaluasi).</p>
+                <button id="btn-generate-judul" class="px-6 py-3.5 rounded-full bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-extrabold text-sm cosmic-glow-btn flex items-center gap-2">
+                  <i data-lucide="wand-2" class="w-4 h-4"></i>
+                  <span>Generate 3 Ide Judul</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Generated Results Container -->
+            <div id="gen-results-container" class="hidden space-y-4">
+              <h3 class="text-base font-extrabold text-white flex items-center gap-2">
+                <i data-lucide="sparkles" class="w-5 h-5 text-yellow-400"></i>
+                <span>Rekomendasi Judul Skripsi Terbaik</span>
+              </h3>
+              <div id="gen-results-grid" class="grid grid-cols-1 gap-4"></div>
+            </div>
+          </div>
+
+          <!-- ==================== TAB 3: KOREKTOR & EVALUATOR JUDUL ==================== -->
+          <div id="section-korektor" class="app-section hidden space-y-6">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">Uji Kelayakan Akademik</span>
+              <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Korektor &amp; Evaluator Judul Skripsi</h2>
+              <p class="text-sm text-slate-400 mt-1">Evaluasi draf judul Anda dari aspek kejelasan metode TI, objek penelitian, parameter ukur, dan dapatkan rekomendasi penyempurnaan.</p>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 space-y-4">
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Draf Judul Skripsi Anda</label>
+                <textarea id="kor-input-judul" rows="3" placeholder="Tempel atau ketik draf judul skripsi Anda di sini... Contoh: Sistem Informasi Penjualan Berbasis Web pada Toko Maju" class="w-full p-4 rounded-2xl bg-[#0B0D21] border border-white/15 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-yellow-400 leading-relaxed"></textarea>
+              </div>
+              <div class="flex justify-end">
+                <button id="btn-koreksi-judul" class="px-6 py-3.5 rounded-full bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-extrabold text-sm cosmic-glow-btn flex items-center gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                  <span>Analisis &amp; Koreksi Judul</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Evaluation Output -->
+            <div id="kor-result-box" class="hidden glass-card rounded-3xl p-6 space-y-6 border border-indigo-400/30">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-white/10">
+                <div>
+                  <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">Hasil Penilaian Struktur TI</span>
+                  <h3 id="kor-grade-label" class="text-xl font-extrabold text-white mt-0.5">Layak dengan Catatan</h3>
+                </div>
+                <div class="flex items-center gap-3 bg-[#0B0D21] px-5 py-3 rounded-2xl border border-white/10">
+                  <span class="text-xs font-bold text-slate-400">Skor Kelayakan:</span>
+                  <span id="kor-score-value" class="text-2xl font-extrabold text-yellow-400">82%</span>
+                </div>
+              </div>
+
+              <!-- Checklist Criteria -->
+              <div id="kor-checklist" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+
+              <!-- Recommended Revisions -->
+              <div class="space-y-3">
+                <h4 class="text-sm font-extrabold text-white flex items-center gap-2">
+                  <i data-lucide="pen-tool" class="w-4 h-4 text-yellow-400"></i>
+                  <span>Saran Penyempurnaan Judul (Lebih Tajam &amp; Ilmiah)</span>
+                </h4>
+                <div id="kor-suggestions" class="space-y-2.5"></div>
+              </div>
+
+              <div class="pt-2 flex justify-end">
+                <button id="btn-save-koreksi" class="px-5 py-2.5 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold flex items-center gap-2 transition">
+                  <i data-lucide="save" class="w-4 h-4"></i>
+                  <span>Simpan Hasil Koreksi ke Riwayat</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ==================== TAB 4: DETEKTOR WATERMARK & POLA AI SKRIPSI ==================== -->
+          <div id="section-detektor" class="app-section hidden space-y-6">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-pink-400">Integritas Akademik &amp; Forensik Teks</span>
+              <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Detektor Watermark &amp; Pola AI Skripsi</h2>
+              <p class="text-sm text-slate-400 mt-1">Memindai karakter Unicode tersembunyi (Zero-Width Space/Joiner watermark dari LLM) serta mendeteksi pola sintaksis khas tulisan AI pada abstrak atau bab skripsi.</p>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 space-y-4">
+              <div class="flex items-center justify-between">
+                <label class="text-xs font-bold uppercase tracking-wider text-slate-300">Teks Abstrak / Paragraf Skripsi</label>
+                <button type="button" id="btn-sample-ai-text" class="text-xs font-semibold text-indigo-400 hover:text-yellow-400 transition">
+                  Uji dengan Contoh Teks Ber-Watermark
+                </button>
+              </div>
+              <textarea id="ai-input-text" rows="6" placeholder="Tempel teks abstrak, latar belakang, atau tinjauan pustaka skripsi Anda di sini untuk memindai watermark tersembunyi..." class="w-full p-4 rounded-2xl bg-[#0B0D21] border border-white/15 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-yellow-400 leading-relaxed"></textarea>
+              
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <span id="ai-char-count" class="text-xs text-slate-400">0 karakter | 0 kata</span>
+                <button id="btn-scan-ai" class="px-6 py-3.5 rounded-full bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-extrabold text-sm cosmic-glow-btn flex items-center gap-2">
+                  <i data-lucide="radar" class="w-4 h-4"></i>
+                  <span>Pindai Watermark &amp; Pola AI</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Scan Result Panel -->
+            <div id="ai-result-panel" class="hidden glass-card rounded-3xl p-6 space-y-6 border border-pink-500/30">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="p-4 rounded-2xl bg-[#0B0D21] border border-white/10">
+                  <span class="text-xs text-slate-400 font-semibold">Indikasi Konten AI</span>
+                  <p id="ai-prob-score" class="text-3xl font-extrabold text-pink-400 mt-1">0%</p>
+                  <p id="ai-prob-label" class="text-xs text-slate-300 mt-1">Aman / Tulisan Manusia</p>
+                </div>
+                <div class="p-4 rounded-2xl bg-[#0B0D21] border border-white/10">
+                  <span class="text-xs text-slate-400 font-semibold">Watermark Tersembunyi</span>
+                  <p id="ai-watermark-count" class="text-3xl font-extrabold text-yellow-400 mt-1">0</p>
+                  <p class="text-xs text-slate-300 mt-1">Karakter Zero-Width Unicode</p>
+                </div>
+                <div class="p-4 rounded-2xl bg-[#0B0D21] border border-white/10">
+                  <span class="text-xs text-slate-400 font-semibold">Pola Klise LLM</span>
+                  <p id="ai-cliche-count" class="text-3xl font-extrabold text-indigo-400 mt-1">0</p>
+                  <p class="text-xs text-slate-300 mt-1">Frasa transisi &amp; tanda baca AI</p>
+                </div>
+              </div>
+
+              <!-- Detailed Findings -->
+              <div id="ai-findings-detail" class="p-4 rounded-2xl bg-[#0B0D21]/80 border border-white/10 space-y-2 text-sm text-slate-300"></div>
+
+              <!-- Action Buttons -->
+              <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+                <button id="btn-clean-watermark" class="px-5 py-2.5 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs flex items-center gap-2 transition">
+                  <i data-lucide="eraser" class="w-4 h-4"></i>
+                  <span>Bersihkan Watermark &amp; Salin Teks Bersih</span>
+                </button>
+                <button id="btn-save-ai-scan" class="px-5 py-2.5 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center gap-2 transition">
+                  <i data-lucide="save" class="w-4 h-4"></i>
+                  <span>Simpan Laporan ke Riwayat</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ==================== TAB 5: KEAMANAN AKUN (2FA / MFA) ==================== -->
+          <div id="section-keamanan" class="app-section hidden space-y-6">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Perlindungan Berlapis</span>
+              <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Pengaturan Keamanan 2FA / MFA</h2>
+              <p class="text-sm text-slate-400 mt-1">Aktifkan autentikasi dua faktor untuk melindungi akun dan draf penelitian skripsi Anda dari akses tidak sah.</p>
+            </div>
+
+            <!-- 2FA Status & Setup Card -->
+            <div class="glass-card rounded-3xl p-6 space-y-6">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-white/10">
+                <div class="flex items-center gap-4">
+                  <div id="mfa-icon-box" class="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                    <i data-lucide="shield-check" class="w-6 h-6"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-lg font-extrabold text-white">Status Two-Factor Authentication</h3>
+                    <p id="mfa-status-subtitle" class="text-xs text-slate-400 mt-0.5">Melindungi sesi login dengan verifikasi kode kedua.</p>
+                  </div>
+                </div>
+                <span id="mfa-pill-indicator" class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-extrabold bg-emerald-500/20 text-emerald-400 self-start sm:self-center">
+                  AKTIF
+                </span>
+              </div>
+
+              <!-- Dynamic MFA Setup Area (Admin TOTP QR vs Mahasiswa PIN/Secret) -->
+              <div id="mfa-setup-container" class="space-y-4">
+                <!-- Diisi dinamis sesuai role Admin / Mahasiswa -->
+              </div>
+            </div>
+
+            <!-- Security Audit Logs -->
+            <div class="glass-card rounded-3xl p-6">
+              <h3 class="text-base font-extrabold text-white mb-4 flex items-center gap-2">
+                <i data-lucide="history" class="w-4 h-4 text-indigo-400"></i>
+                <span>Riwayat Aktivitas Login &amp; Verifikasi</span>
+              </h3>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                  <thead>
+                    <tr class="border-b border-white/10 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                      <th class="py-3 px-3">Pengguna</th>
+                      <th class="py-3 px-3">Peran</th>
+                      <th class="py-3 px-3">Metode</th>
+                      <th class="py-3 px-3">Status</th>
+                      <th class="py-3 px-3">Waktu</th>
+                    </tr>
+                  </thead>
+                  <tbody id="security-logs-tbody" class="divide-y divide-white/5 text-xs text-slate-300">
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- ==================== TAB 6: MANAJEMEN MAHASISWA (KHUSUS ADMIN) ==================== -->
+          <div id="section-admin" class="app-section hidden space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Panel Dosen &amp; Koordinator</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Manajemen Akun Mahasiswa TI</h2>
+              </div>
+              <button id="btn-open-add-mhs" class="px-5 py-3 rounded-full bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-extrabold text-xs cosmic-glow-btn flex items-center gap-2 self-start">
+                <i data-lucide="user-plus" class="w-4 h-4"></i>
+                <span>Tambah Mahasiswa Baru</span>
+              </button>
+            </div>
+
+            <!-- Form Tambah Mahasiswa (Collapsible) -->
+            <div id="form-add-mhs-card" class="hidden glass-card rounded-3xl p-6 border border-yellow-400/30">
+              <h3 class="text-base font-extrabold text-white mb-4">Registrasi Akun Mahasiswa S1 TI</h3>
+              <form id="form-create-mahasiswa" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <input type="text" id="new-mhs-nim" required placeholder="NIM (Contoh: 210411100202)" class="px-4 py-3 rounded-2xl bg-[#0B0D21] border border-white/15 text-xs text-white focus:outline-none focus:border-yellow-400" />
+                <input type="text" id="new-mhs-nama" required placeholder="Nama Lengkap" class="px-4 py-3 rounded-2xl bg-[#0B0D21] border border-white/15 text-xs text-white focus:outline-none focus:border-yellow-400" />
+                <input type="text" id="new-mhs-pass" required placeholder="Password Awal" class="px-4 py-3 rounded-2xl bg-[#0B0D21] border border-white/15 text-xs text-white focus:outline-none focus:border-yellow-400" />
+                <select id="new-mhs-peminatan" class="px-4 py-3 rounded-2xl bg-[#0B0D21] border border-white/15 text-xs text-white focus:outline-none focus:border-yellow-400">
+                  <option value="AI & Machine Learning">AI &amp; Machine Learning</option>
+                  <option value="Web & Mobile Engineering">Web &amp; Mobile Engineering</option>
+                  <option value="Cyber Security & Jaringan">Cyber Security &amp; Jaringan</option>
+                  <option value="Internet of Things (IoT)">Internet of Things (IoT)</option>
+                  <option value="Data Science & Big Data">Data Science &amp; Big Data</option>
+                </select>
+                <div class="sm:col-span-2 lg:col-span-4 flex justify-end gap-3">
+                  <button type="button" id="btn-cancel-add-mhs" class="px-5 py-2.5 rounded-full border border-white/20 text-xs font-bold text-slate-300">Batal</button>
+                  <button type="submit" class="px-6 py-2.5 rounded-full bg-yellow-400 text-slate-950 font-extrabold text-xs">Simpan Mahasiswa</button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Tabel Data Mahasiswa -->
+            <div class="glass-card rounded-3xl p-6">
+              <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                  <thead>
+                    <tr class="border-b border-white/10 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                      <th class="py-3 px-3">NIM</th>
+                      <th class="py-3 px-3">Nama Lengkap</th>
+                      <th class="py-3 px-3">Peminatan</th>
+                      <th class="py-3 px-3">Status 2FA</th>
+                      <th class="py-3 px-3 text-right">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-mahasiswa-tbody" class="divide-y divide-white/5 text-xs text-slate-200">
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </main>
+
+      <!-- MOBILE FLOATING BOTTOM NAVIGATION BAR -->
+      <nav class="md:hidden fixed bottom-3 left-3 right-3 z-40 glass-card rounded-full px-2 py-2 border border-white/15 shadow-2xl flex items-center justify-around">
+        <button data-nav="dashboard" class="mobile-nav-item flex flex-col items-center justify-center p-2 rounded-full text-yellow-400">
+          <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+          <span class="text-[10px] font-bold mt-0.5">Beranda</span>
+        </button>
+        <button data-nav="generator" class="mobile-nav-item flex flex-col items-center justify-center p-2 rounded-full text-slate-400">
+          <i data-lucide="sparkles" class="w-5 h-5"></i>
+          <span class="text-[10px] font-semibold mt-0.5">Ide Judul</span>
+        </button>
+        <button data-nav="korektor" class="mobile-nav-item flex flex-col items-center justify-center p-2 rounded-full text-slate-400">
+          <i data-lucide="file-check-2" class="w-5 h-5"></i>
+          <span class="text-[10px] font-semibold mt-0.5">Korektor</span>
+        </button>
+        <button data-nav="detektor" class="mobile-nav-item flex flex-col items-center justify-center p-2 rounded-full text-slate-400">
+          <i data-lucide="scan-line" class="w-5 h-5"></i>
+          <span class="text-[10px] font-semibold mt-0.5">AI Scan</span>
+        </button>
+        <button data-nav="keamanan" class="mobile-nav-item flex flex-col items-center justify-center p-2 rounded-full text-slate-400">
+          <i data-lucide="shield-check" class="w-5 h-5"></i>
+          <span class="text-[10px] font-semibold mt-0.5">2FA</span>
+        </button>
+        <button id="mobile-nav-admin" data-nav="admin" class="mobile-nav-item hidden flex flex-col items-center justify-center p-2 rounded-full text-slate-400">
+          <i data-lucide="users" class="w-5 h-5"></i>
+          <span class="text-[10px] font-semibold mt-0.5">Admin</span>
+        </button>
+      </nav>
+
+    </div>
+  </div>
+
+  <!-- APPLICATION LOGIC & SUPABASE INTEGRATION -->
+  <script type="module">
+    const IS_PREVIEW = false; // Ubah menjadi false SAAT DEPLOY agar mode preview & data dummy hilang dan terhubung 100% ke Supabase
+    const SUPABASE_URL = "https://peftrlmmjphfngsaxwmu.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_SSktQquMOqiT8iY9sHO7yA_Jf1ShkGB";
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    // Inisialisasi Supabase Client hanya jika bukan preview & URL valid
+    let supabase = null;
+    if (!IS_PREVIEW && SUPABASE_URL.startsWith('http')) {
+      supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+
+    // ==================== PWA DYNAMIC SERVICE WORKER ====================
+    if ('serviceWorker' in navigator) {
+      const swCode = `
+        const CACHE_NAME = 'skripsiquest-ti-v1';
+        self.addEventListener('install', (e) => self.skipWaiting());
+        self.addEventListener('activate', (e) => e.waitUntil(clients.claim()));
+        self.addEventListener('fetch', (e) => {
+          e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+        });
+      `;
+      const blob = new Blob([swCode], { type: 'application/javascript' });
+      const swUrl = URL.createObjectURL(blob);
+      navigator.serviceWorker.register(swUrl).catch(() => {});
+    }
+
+    // ==================== DUMMY DATA (HANYA AKTIF JIKA IS_PREVIEW === true) ====================
+    const previewStore = IS_PREVIEW ? {
+      mahasiswa: [
+        {
+          id: '11111111-1111-1111-1111-111111111111',
+          nim: '210411100101',
+          nama_lengkap: 'Raka Pratama Putra',
+          password: '123',
+          peminatan: 'AI & Machine Learning',
+          mfa_enabled: true,
+          mfa_secret: '123456',
+          created_at: new Date().toISOString()
+        },
+        {
+          id: '22222222-2222-2222-2222-222222222222',
+          nim: '210411100102',
+          nama_lengkap: 'Nadia Safitri',
+          password: '123',
+          peminatan: 'Cyber Security & Jaringan',
+          mfa_enabled: false,
+          mfa_secret: null,
+          created_at: new Date().toISOString()
+        }
+      ],
+      riwayat_skripsi: [
+        {
+          id: '33333333-3333-3333-3333-333333333333',
+          user_identifier: '210411100101',
+          nama_pengguna: 'Raka Pratama Putra',
+          jenis_aktivitas: 'koreksi_judul',
+          input_teks: 'Implementasi Convolutional Neural Network (CNN) untuk Klasifikasi Penyakit Daun Padi Berbasis Mobile',
+          hasil_analisis: { skor: 92, catatan: 'Metode, objek, dan platform sangat jelas dan terukur.' },
+          created_at: new Date().toISOString()
+        }
+      ],
+      log_keamanan: [
+        {
+          id: '44444444-4444-4444-4444-444444444444',
+          user_identifier: '210411100101',
+          role: 'mahasiswa',
+          metode_verifikasi: 'Password + 2FA',
+          status: 'Berhasil',
+          created_at: new Date().toISOString()
+        }
+      ]
+    } : null;
+
+    // ==================== APPLICATION STATE ====================
+    let currentUser = null; // { role: 'admin' | 'mahasiswa', identifier, name, mfaEnabled, mfaSecret, raw }
+    let pendingAuthUser = null; // Menyimpan sesi sementara sebelum verifikasi 2FA selesai
+    let pendingMfaFactorId = null; // Untuk Supabase Admin MFA challenge
+    let lastKoreksiResult = null;
+    let lastAiScanResult = null;
+
+    // ==================== UI HELPERS ====================
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const colors = {
+        success: 'border-emerald-400/50 bg-[#161B3D] text-emerald-300',
+        error: 'border-rose-500/50 bg-[#161B3D] text-rose-300',
+        warning: 'border-amber-400/50 bg-[#161B3D] text-amber-300',
+        info: 'border-indigo-400/50 bg-[#161B3D] text-white'
+      };
+      const icons = {
+        success: 'check-circle',
+        error: 'x-circle',
+        warning: 'alert-triangle',
+        info: 'info'
+      };
+      const el = document.createElement('div');
+      el.className = `pointer-events-auto flex items-center gap-3 px-4 py-3.5 rounded-2xl border shadow-2xl backdrop-blur-md text-xs font-bold transition-all duration-300 ${colors[type] || colors.info}`;
+      el.innerHTML = `<i data-lucide="${icons[type] || 'info'}" class="w-4 h-4 shrink-0"></i><span>${message}</span>`;
+      container.appendChild(el);
+      lucide.createIcons();
+      setTimeout(() => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(-10px)';
+        setTimeout(() => el.remove(), 300);
+      }, 3500);
+    }
+
+    function showConfirm(title, message) {
+      return new Promise((resolve) => {
+        const modal = document.getElementById('confirm-modal');
+        document.getElementById('confirm-title').textContent = title;
+        document.getElementById('confirm-message').textContent = message;
+        modal.classList.remove('hidden');
+
+        const cleanup = (result) => {
+          modal.classList.add('hidden');
+          document.getElementById('confirm-ok-btn').onclick = null;
+          document.getElementById('confirm-cancel-btn').onclick = null;
+          resolve(result);
+        };
+
+        document.getElementById('confirm-ok-btn').onclick = () => cleanup(true);
+        document.getElementById('confirm-cancel-btn').onclick = () => cleanup(false);
+      });
+    }
+
+    function formatDate(isoStr) {
+      if (!isoStr) return '-';
+      const d = new Date(isoStr);
+      return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
+
+    // ==================== INITIALIZATION & PREVIEW TOGGLE ====================
+    function initEnvironment() {
+      if (IS_PREVIEW) {
+        document.getElementById('preview-banner').classList.remove('hidden');
+        document.getElementById('preview-quick-login').classList.remove('hidden');
+      } else {
+        document.getElementById('preview-banner').classList.add('hidden');
+        document.getElementById('preview-quick-login').classList.add('hidden');
+      }
+      lucide.createIcons();
+    }
+
+    // ==================== ROLE TABS ON LOGIN ====================
+    const tabMhs = document.getElementById('tab-role-mahasiswa');
+    const tabAdmin = document.getElementById('tab-role-admin');
+    const formMhs = document.getElementById('form-login-mahasiswa');
+    const formAdmin = document.getElementById('form-login-admin');
+
+    tabMhs.addEventListener('click', () => {
+      tabMhs.className = 'py-2.5 px-4 rounded-full text-xs sm:text-sm font-bold transition bg-yellow-400 text-slate-950 shadow';
+      tabAdmin.className = 'py-2.5 px-4 rounded-full text-xs sm:text-sm font-bold transition text-slate-300 hover:text-white';
+      formMhs.classList.remove('hidden');
+      formAdmin.classList.add('hidden');
+    });
+
+    tabAdmin.addEventListener('click', () => {
+      tabAdmin.className = 'py-2.5 px-4 rounded-full text-xs sm:text-sm font-bold transition bg-yellow-400 text-slate-950 shadow';
+      tabMhs.className = 'py-2.5 px-4 rounded-full text-xs sm:text-sm font-bold transition text-slate-300 hover:text-white';
+      formAdmin.classList.remove('hidden');
+      formMhs.classList.add('hidden');
+    });
+
+    // ==================== AUTHENTICATION & 2FA FLOW ====================
+    async function recordSecurityLog(identifier, role, metode, status) {
+      if (IS_PREVIEW) {
+        previewStore.log_keamanan.unshift({
+          id: crypto.randomUUID(),
+          user_identifier: identifier,
+          role,
+          metode_verifikasi: metode,
+          status,
+          created_at: new Date().toISOString()
+        });
+        return;
+      }
+      if (!supabase) return;
+      await supabase.from('log_keamanan').insert([{
+        user_identifier: identifier,
+        role,
+        metode_verifikasi: metode,
+        status
+      }]);
+    }
+
+    function trigger2FAStep(userObj, factorId = null) {
+      pendingAuthUser = userObj;
+      pendingMfaFactorId = factorId;
+      document.getElementById('login-step-credentials').classList.add('hidden');
+      document.getElementById('login-step-2fa').classList.remove('hidden');
+      document.getElementById('input-2fa-code').value = '';
+      document.getElementById('input-2fa-code').focus();
+      if (IS_PREVIEW && userObj.mfaSecret) {
+        document.getElementById('mfa-challenge-desc').innerHTML = `Akun dilindungi 2FA. <span class="text-yellow-400 font-bold">(Preview PIN: ${userObj.mfaSecret})</span>`;
+      }
+    }
+
+    async function completeLogin(userObj, via2FA = false) {
+      currentUser = userObj;
+      pendingAuthUser = null;
+      pendingMfaFactorId = null;
+
+      await recordSecurityLog(userObj.identifier, userObj.role, via2FA ? 'Password + 2FA' : 'Password', 'Berhasil');
+
+      document.getElementById('auth-view').classList.add('hidden');
+      document.getElementById('app-view').classList.remove('hidden');
+      document.getElementById('login-step-credentials').classList.remove('hidden');
+      document.getElementById('login-step-2fa').classList.add('hidden');
+
+      updateUserUI();
+      switchTab('dashboard');
+      await loadDashboardData();
+      showToast(`Selamat datang, ${userObj.name}!`, 'success');
+    }
+
+    // Login Mahasiswa Handler
+    formMhs.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const nim = document.getElementById('mhs-nim').value.trim();
+      const password = document.getElementById('mhs-password').value.trim();
+
+      if (IS_PREVIEW) {
+        const found = previewStore.mahasiswa.find(m => m.nim === nim && m.password === password);
+        if (!found) {
+          showToast('NIM atau kata sandi tidak ditemukan di mode preview.', 'error');
+          return;
+        }
+        const userObj = {
+          role: 'mahasiswa',
+          identifier: found.nim,
+          name: found.nama_lengkap,
+          peminatan: found.peminatan,
+          mfaEnabled: found.mfa_enabled,
+          mfaSecret: found.mfa_secret,
+          raw: found
+        };
+        if (found.mfa_enabled) {
+          trigger2FAStep(userObj);
+        } else {
+          await completeLogin(userObj, false);
+        }
+        return;
+      }
+
+      if (!supabase) {
+        showToast('Konfigurasi SUPABASE_URL dan SUPABASE_ANON_KEY belum diisi!', 'error');
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('mahasiswa')
+        .select('*')
+        .eq('nim', nim)
+        .eq('password', password)
+        .maybeSingle();
+
+      if (error || !data) {
+        await recordSecurityLog(nim, 'mahasiswa', 'Password', 'Gagal');
+        showToast('NIM atau kata sandi salah.', 'error');
+        return;
+      }
+
+      const userObj = {
+        role: 'mahasiswa',
+        identifier: data.nim,
+        name: data.nama_lengkap,
+        peminatan: data.peminatan,
+        mfaEnabled: data.mfa_enabled,
+        mfaSecret: data.mfa_secret,
+        raw: data
+      };
+
+      if (data.mfa_enabled && data.mfa_secret) {
+        trigger2FAStep(userObj);
+      } else {
+        await completeLogin(userObj, false);
+      }
+    });
+
+    // Login Admin Handler (Supabase Auth + MFA)
+    formAdmin.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('admin-email').value.trim();
+      const password = document.getElementById('admin-password').value.trim();
+
+      if (IS_PREVIEW) {
+        const userObj = {
+          role: 'admin',
+          identifier: email || 'zakariyyacreative@gmail.com',
+          name: 'Dr. Hendra Wijaya, M.Kom',
+          mfaEnabled: true,
+          mfaSecret: '123456',
+          raw: null
+        };
+        trigger2FAStep(userObj);
+        return;
+      }
+
+      if (!supabase) {
+        showToast('Konfigurasi SUPABASE_URL dan SUPABASE_ANON_KEY belum diisi!', 'error');
+        return;
+      }
+
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error || !data.user) {
+        await recordSecurityLog(email, 'admin', 'Password', 'Gagal');
+        showToast(error?.message || 'Login Admin gagal.', 'error');
+        return;
+      }
+
+      // Cek apakah Admin memiliki faktor MFA TOTP aktif di Supabase Auth
+      const { data: factorsData } = await supabase.auth.mfa.listFactors();
+      const verifiedTotp = factorsData?.totp?.find(f => f.status === 'verified');
+
+      const userObj = {
+        role: 'admin',
+        identifier: data.user.email,
+        name: data.user.user_metadata?.full_name || data.user.email.split('@')[0],
+        mfaEnabled: Boolean(verifiedTotp),
+        mfaSecret: null,
+        raw: data.user
+      };
+
+      if (verifiedTotp) {
+        trigger2FAStep(userObj, verifiedTotp.id);
+      } else {
+        await completeLogin(userObj, false);
+      }
+    });
+
+    // Verify 2FA Form Handler
+    document.getElementById('form-verify-2fa').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const code = document.getElementById('input-2fa-code').value.trim();
+      if (!pendingAuthUser) return;
+
+      if (IS_PREVIEW) {
+        if (code === pendingAuthUser.mfaSecret || code === '123456') {
+          await completeLogin(pendingAuthUser, true);
+        } else {
+          showToast('Kode 2FA tidak cocok (Gunakan 123456 di Mode Preview).', 'error');
+        }
+        return;
+      }
+
+      if (pendingAuthUser.role === 'admin' && pendingMfaFactorId) {
+        const { data: challenge, error: chalErr } = await supabase.auth.mfa.challenge({ factorId: pendingMfaFactorId });
+        if (chalErr) {
+          showToast(chalErr.message, 'error');
+          return;
+        }
+        const { error: verErr } = await supabase.auth.mfa.verify({
+          factorId: pendingMfaFactorId,
+          challengeId: challenge.id,
+          code
+        });
+        if (verErr) {
+          await recordSecurityLog(pendingAuthUser.identifier, 'admin', '2FA TOTP', 'Gagal');
+          showToast('Kode Authenticator salah atau kedaluwarsa.', 'error');
+          return;
+        }
+        await completeLogin(pendingAuthUser, true);
+      } else if (pendingAuthUser.role === 'mahasiswa') {
+        if (code === pendingAuthUser.mfaSecret) {
+          await completeLogin(pendingAuthUser, true);
+        } else {
+          await recordSecurityLog(pendingAuthUser.identifier, 'mahasiswa', '2FA PIN', 'Gagal');
+          showToast('Kode PIN Keamanan 2FA salah!', 'error');
+        }
+      }
+    });
+
+    document.getElementById('btn-cancel-2fa').addEventListener('click', () => {
+      pendingAuthUser = null;
+      pendingMfaFactorId = null;
+      document.getElementById('login-step-2fa').classList.add('hidden');
+      document.getElementById('login-step-credentials').classList.remove('hidden');
+    });
+
+    // Quick Login Handlers (Only active when IS_PREVIEW === true)
+    document.getElementById('quick-login-mhs')?.addEventListener('click', async () => {
+      if (!IS_PREVIEW) return;
+      const mhs = previewStore.mahasiswa[0];
+      await completeLogin({
+        role: 'mahasiswa',
+        identifier: mhs.nim,
+        name: mhs.nama_lengkap,
+        peminatan: mhs.peminatan,
+        mfaEnabled: mhs.mfa_enabled,
+        mfaSecret: mhs.mfa_secret,
+        raw: mhs
+      }, true);
+    });
+
+    document.getElementById('quick-login-admin')?.addEventListener('click', async () => {
+      if (!IS_PREVIEW) return;
+      await completeLogin({
+        role: 'admin',
+        identifier: 'koordinator.ti@kampus.ac.id',
+        name: 'Dr. Hendra Wijaya, M.Kom',
+        mfaEnabled: true,
+        mfaSecret: '123456',
+        raw: null
+      }, true);
+    });
+
+    // Logout Handlers
+    async function handleLogout() {
+      if (!IS_PREVIEW && supabase && currentUser?.role === 'admin') {
+        await supabase.auth.signOut();
+      }
+      currentUser = null;
+      document.getElementById('app-view').classList.add('hidden');
+      document.getElementById('auth-view').classList.remove('hidden');
+      showToast('Anda telah keluar dari sesi.', 'info');
+    }
+
+    document.getElementById('btn-logout-desktop').addEventListener('click', handleLogout);
+    document.getElementById('btn-logout-mobile').addEventListener('click', handleLogout);
+
+    // ==================== NAVIGATION & UI UPDATES ====================
+    function updateUserUI() {
+      if (!currentUser) return;
+      const initials = currentUser.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
+      document.getElementById('sidebar-avatar').textContent = initials;
+      document.getElementById('sidebar-user-name').textContent = currentUser.name;
+      document.getElementById('hero-user-name').textContent = currentUser.name;
+      document.getElementById('sidebar-user-role').textContent = currentUser.role === 'admin' ? 'Admin / Dosen' : 'Mahasiswa TI';
+
+      // Status 2FA badges
+      const mfaBadge = document.getElementById('sidebar-2fa-badge');
+      const mobileBadge = document.getElementById('mobile-2fa-status');
+      const statMfa = document.getElementById('stat-mfa-status');
+      if (currentUser.mfaEnabled) {
+        mfaBadge.textContent = '2FA ON';
+        mfaBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400';
+        mobileBadge.textContent = '2FA ON';
+        mobileBadge.className = 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400';
+        statMfa.textContent = 'Aktif (Terlindungi)';
+        statMfa.className = 'text-xl font-extrabold text-emerald-400';
+      } else {
+        mfaBadge.textContent = '2FA OFF';
+        mfaBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-400';
+        mobileBadge.textContent = '2FA OFF';
+        mobileBadge.className = 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-400';
+        statMfa.textContent = 'Belum Aktif';
+        statMfa.className = 'text-xl font-extrabold text-rose-400';
+      }
+
+      // Admin Menu Visibility
+      if (currentUser.role === 'admin') {
+        document.getElementById('nav-admin-panel').classList.remove('hidden');
+        document.getElementById('mobile-nav-admin').classList.remove('hidden');
+      } else {
+        document.getElementById('nav-admin-panel').classList.add('hidden');
+        document.getElementById('mobile-nav-admin').classList.add('hidden');
+      }
+    }
+
+    window.switchTab = function(tabName) {
+      document.querySelectorAll('.app-section').forEach(sec => sec.classList.add('hidden'));
+      const target = document.getElementById(`section-${tabName}`);
+      if (target) target.classList.remove('hidden');
+
+      // Desktop nav styling
+      document.querySelectorAll('.nav-item').forEach(btn => {
+        if (btn.dataset.nav === tabName) {
+          btn.className = 'nav-item w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition bg-yellow-400 text-slate-950';
+        } else {
+          btn.className = 'nav-item w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold text-slate-300 hover:bg-white/10 hover:text-white transition';
+        }
+      });
+
+      // Mobile nav styling
+      document.querySelectorAll('.mobile-nav-item').forEach(btn => {
+        if (btn.dataset.nav === tabName) {
+          btn.classList.add('text-yellow-400');
+          btn.classList.remove('text-slate-400');
+        } else {
+          btn.classList.remove('text-yellow-400');
+          btn.classList.add('text-slate-400');
+        }
+      });
+
+      if (tabName === 'keamanan') renderMfaSection();
+      if (tabName === 'admin' && currentUser?.role === 'admin') loadAdminMahasiswaTable();
+    };
+
+    document.querySelectorAll('[data-nav]').forEach(btn => {
+      btn.addEventListener('click', () => switchTab(btn.dataset.nav));
+    });
+
+    // ==================== DASHBOARD DATA & HISTORY ====================
+    async function saveHistoryRecord(jenis, inputTeks, hasilObj) {
+      if (!currentUser) return;
+      const payload = {
+        user_identifier: currentUser.identifier,
+        nama_pengguna: currentUser.name,
+        jenis_aktivitas: jenis,
+        input_teks: inputTeks,
+        hasil_analisis: hasilObj
+      };
+
+      if (IS_PREVIEW) {
+        previewStore.riwayat_skripsi.unshift({
+          id: crypto.randomUUID(),
+          ...payload,
+          created_at: new Date().toISOString()
+        });
+        await loadDashboardData();
+        return;
+      }
+
+      if (!supabase) return;
+      const { error } = await supabase.from('riwayat_skripsi').insert([payload]);
+      if (error) {
+        showToast('Gagal menyimpan riwayat: ' + error.message, 'error');
+      } else {
+        await loadDashboardData();
+      }
+    }
+
+    async function loadDashboardData() {
+      if (!currentUser) return;
+      let rows = [];
+
+      if (IS_PREVIEW) {
+        rows = currentUser.role === 'admin'
+          ? previewStore.riwayat_skripsi
+          : previewStore.riwayat_skripsi.filter(r => r.user_identifier === currentUser.identifier);
+      } else if (supabase) {
+        let query = supabase.from('riwayat_skripsi').select('*').order('created_at', { ascending: false }).limit(20);
+        if (currentUser.role !== 'admin') {
+          query = query.eq('user_identifier', currentUser.identifier);
+        }
+        const { data } = await query;
+        rows = data || [];
+      }
+
+      document.getElementById('stat-total-riwayat').textContent = rows.length;
+      const scoredRows = rows.filter(r => typeof r.hasil_analisis?.skor === 'number');
+      const avg = scoredRows.length
+        ? Math.round(scoredRows.reduce((acc, r) => acc + r.hasil_analisis.skor, 0) / scoredRows.length)
+        : 0;
+      document.getElementById('stat-avg-score').textContent = `${avg}%`;
+
+      const listEl = document.getElementById('dashboard-history-list');
+      if (!rows.length) {
+        listEl.innerHTML = `
+          <div class="text-center py-10 px-4 rounded-2xl bg-[#0B0D21]/60 border border-dashed border-white/15">
+            <i data-lucide="inbox" class="w-10 h-10 text-slate-500 mx-auto mb-2"></i>
+            <p class="text-sm font-bold text-slate-300">Belum ada data riwayat analisis</p>
+            <p class="text-xs text-slate-500 mt-1">Mulai gunakan Generator Ide Judul, Korektor, atau Detektor Watermark AI.</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      const badges = {
+        generator_judul: { label: 'Ide Judul', cls: 'bg-yellow-400/15 text-yellow-400' },
+        koreksi_judul: { label: 'Koreksi Judul', cls: 'bg-indigo-500/20 text-indigo-300' },
+        deteksi_ai: { label: 'Deteksi AI', cls: 'bg-pink-500/20 text-pink-300' }
+      };
+
+      listEl.innerHTML = rows.map(item => {
+        const b = badges[item.jenis_aktivitas] || { label: item.jenis_aktivitas, cls: 'bg-white/10 text-white' };
+        const skorInfo = typeof item.hasil_analisis?.skor === 'number' ? `<span class="text-xs font-extrabold text-emerald-400">Skor: ${item.hasil_analisis.skor}%</span>` : '';
+        return `
+          <div class="p-4 rounded-2xl bg-[#0B0D21]/75 border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="space-y-1 min-w-0">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full ${b.cls}">${b.label}</span>
+                <span class="text-[11px] text-slate-400">${item.nama_pengguna} • ${formatDate(item.created_at)}</span>
+              </div>
+              <p class="text-sm font-bold text-white truncate">${item.input_teks}</p>
+              <p class="text-xs text-slate-400 line-clamp-1">${item.hasil_analisis?.catatan || ''}</p>
+            </div>
+            <div class="shrink-0 flex items-center gap-3">
+              ${skorInfo}
+            </div>
+          </div>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    document.getElementById('btn-refresh-history').addEventListener('click', () => {
+      loadDashboardData();
+      showToast('Riwayat diperbarui.', 'info');
+    });
+
+    // ==================== FITUR 1: IDE & GENERATOR JUDUL SKRIPSI TI ====================
+    const templatesTI = {
+      'AI & Machine Learning': [
+        {
+          pola: (obj) => `Implementasi Arsitektur Convolutional Neural Network (CNN) dengan Transfer Learning MobileNetV2 untuk Klasifikasi dan Deteksi Dini pada ${obj}`,
+          metode: 'CNN (MobileNetV2), Data Augmentation, Confusion Matrix (Accuracy, Precision, Recall, F1-Score)',
+          rumusan: (obj) => `Bagaimana meningkatkan akurasi dan efisiensi komputasi dalam mengklasifikasikan citra ${obj} secara otomatis?`
+        },
+        {
+          pola: (obj) => `Analisis Sentimen dan Klasifikasi Opini Publik Terhadap ${obj} Menggunakan Fine-Tuning IndoBERT dan Bi-LSTM`,
+          metode: 'Natural Language Processing (NLP), IndoBERT, Bi-LSTM, Crawling Dataset',
+          rumusan: (obj) => `Seberapa tinggi performa model hibrida IndoBERT dan Bi-LSTM dalam menangkap konteks semantik pada ulasan terkait ${obj}?`
+        },
+        {
+          pola: (obj) => `Sistem Prediksi dan Peramalan Kebutuhan ${obj} Berbasis Time-Series Menggunakan Algoritma Long Short-Term Memory (LSTM) dan XGBoost`,
+          metode: 'LSTM, XGBoost Regressor, RMSE & MAPE Evaluation',
+          rumusan: (obj) => `Algoritma manakah yang menghasilkan tingkat galat (MAPE) terendah dalam memprediksi tren ${obj}?`
+        }
+      ],
+      'Web & Mobile Engineering': [
+        {
+          pola: (obj) => `Rancang Bangun Progressive Web App (PWA) Manajemen ${obj} Menggunakan Arsitektur Microservices dan Pola Offline-First Synchronization`,
+          metode: 'Progressive Web App, Service Worker, RESTful API, Lighthouse Performance & Black-Box Testing',
+          rumusan: (obj) => `Bagaimana merancang sistem ${obj} yang tetap dapat beroperasi secara luring dan menjaga konsistensi sinkronisasi data?`
+        },
+        {
+          pola: (obj) => `Pengembangan Aplikasi Mobile Lintas Platform untuk Layanan ${obj} Menggunakan Flutter dan Clean Architecture dengan Pengujian Usability SUS`,
+          metode: 'Flutter, Clean Architecture, State Management, System Usability Scale (SUS)',
+          rumusan: (obj) => `Bagaimana penerapan Clean Architecture memengaruhi maintainability kode dan tingkat kepuasan pengguna pada aplikasi ${obj}?`
+        },
+        {
+          pola: (obj) => `Optimasi Performa Query dan Caching Redis pada Sistem Informasi ${obj} Berbasis Node.js dan PostgreSQL`,
+          metode: 'In-Memory Caching (Redis), Database Indexing, Load Testing (Apache JMeter)',
+          rumusan: (obj) => `Seberapa signifikan penurunan latency response time setelah penerapan strategi caching bertingkat pada sistem ${obj}?`
+        }
+      ],
+      'Cyber Security & Jaringan': [
+        {
+          pola: (obj) => `Implementasi Intrusion Detection System (IDS) Berbasis Machine Learning Random Forest untuk Mendeteksi Serangan DDoS pada Infrastruktur ${obj}`,
+          metode: 'Random Forest Classifier, CICIDS Dataset, Snort/Suricata, Packet Capture Analysis',
+          rumusan: (obj) => `Bagaimana tingkat efektivitas deteksi anomali lalu lintas jaringan pada layanan ${obj} dengan meminimalkan False Positive Rate?`
+        },
+        {
+          pola: (obj) => `Pengamanan Pertukaran Data ${obj} Menggunakan Algoritma Kriptografi Hibrida AES-256 dan Elliptic Curve Cryptography (ECC)`,
+          metode: 'AES-256, ECC, Avalanche Effect Testing, Execution Time Benchmark',
+          rumusan: (obj) => `Bagaimana keseimbangan antara kekuatan enkripsi dan kecepatan waktu komputasi pada skema kriptografi hibrida untuk ${obj}?`
+        },
+        {
+          pola: (obj) => `Analisis Kerentanan Keamanan Aplikasi Web ${obj} Menggunakan Standar OWASP Top 10 dan Penerapan Web Application Firewall (WAF)`,
+          metode: 'OWASP WSTG, Penetration Testing, ModSecurity WAF Rule Tuning',
+          rumusan: (obj) => `Celah keamanan kritis apa saja yang ditemukan pada ${obj} dan bagaimana efektivitas mitigasi aturan WAF?`
+        }
+      ],
+      'Internet of Things (IoT)': [
+        {
+          pola: (obj) => `Rancang Bangun Sistem Monitoring dan Otomatisasi ${obj} Berbasis ESP32 dan Protokol MQTT dengan Notifikasi Real-Time`,
+          metode: 'ESP32, MQTT Broker, Kalibrasi Sensor, QoS Packet Loss & Delay Testing',
+          rumusan: (obj) => `Bagaimana keandalan pengiriman data telemetri sensor pada ${obj} menggunakan protokol ringan MQTT pada kondisi jaringan bervariasi?`
+        },
+        {
+          pola: (obj) => `Implementasi Edge Computing dan Fuzzy Logic Sugeno pada Perangkat IoT untuk Efisiensi Energi ${obj}`,
+          metode: 'Edge AI/Fuzzy Logic, Mikrokontroler, Power Consumption Analysis',
+          rumusan: (obj) => `Seberapa besar penghematan daya yang dicapai dengan pemrosesan keputusan lokal pada perangkat IoT ${obj}?`
+        },
+        {
+          pola: (obj) => `Sistem Pelacakan dan Keamanan Aset ${obj} Berbasis LoRaWAN dan GPS dengan Visualisasi Geospasial`,
+          metode: 'LoRaWAN, Modul GPS, RSSI & SNR Range Testing',
+          rumusan: (obj) => `Berapa jarak jangkauan maksimal dan kualitas sinyal LoRaWAN dalam mentransmisikan koordinat ${obj}?`
+        }
+      ],
+      'Data Science & Big Data': [
+        {
+          pola: (obj) => `Segmentasi Perilaku Pengguna pada ${obj} Menggunakan Algoritma K-Means Clustering dan Analisis RFM (Recency, Frequency, Monetary)`,
+          metode: 'K-Means Clustering, Elbow Method, Silhouette Score, Model RFM',
+          rumusan: (obj) => `Berapa jumlah klaster optimal yang terbentuk dari karakteristik data ${obj} berdasarkan evaluasi Silhouette Score?`
+        },
+        {
+          pola: (obj) => `Penerapan Market Basket Analysis Menggunakan Algoritma FP-Growth untuk Rekomendasi Bundling Produk pada ${obj}`,
+          metode: 'Association Rule Mining, Algoritma FP-Growth, Support, Confidence & Lift Ratio',
+          rumusan: (obj) => `Pola asosiasi item apa saja yang memiliki nilai Lift Ratio tertinggi untuk strategi rekomendasi pada ${obj}?`
+        },
+        {
+          pola: (obj) => `Pembangunan Data Warehouse dan Dashboard Business Intelligence untuk Analisis Kinerja ${obj} Menggunakan Skema Star Schema`,
+          metode: 'ETL Pipeline, Star Schema, OLAP, Visualisasi KPI',
+          rumusan: (obj) => `Bagaimana integrasi data transaksional dari berbagai sumber ke dalam Star Schema mempercepat pengambilan keputusan pada ${obj}?`
+        }
+      ]
+    };
+
+    document.getElementById('btn-generate-judul').addEventListener('click', () => {
+      const peminatan = document.getElementById('gen-peminatan').value;
+      const objekRaw = document.getElementById('gen-objek').value.trim();
+      if (!objekRaw) {
+        showToast('Masukkan objek atau studi kasus terlebih dahulu!', 'warning');
+        return;
+      }
+
+      const list = templatesTI[peminatan] || templatesTI['AI & Machine Learning'];
+      const grid = document.getElementById('gen-results-grid');
+      document.getElementById('gen-results-container').classList.remove('hidden');
+
+      grid.innerHTML = list.map((item, idx) => {
+        const judulJadi = item.pola(objekRaw);
+        const rumusanJadi = item.rumusan(objekRaw);
+        return `
+          <div class="glass-card glass-card-hover rounded-2xl p-5 space-y-3 border border-white/15">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-extrabold px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300">Opsi #${idx + 1} • ${peminatan}</span>
+              <button type="button" class="btn-save-generated px-4 py-1.5 rounded-full bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-extrabold text-xs transition" data-judul="${judulJadi.replace(/"/g, '&quot;')}" data-metode="${item.metode.replace(/"/g, '&quot;')}">
+                Simpan ke Riwayat
+              </button>
+            </div>
+            <h4 class="text-base sm:text-lg font-extrabold text-white leading-snug">${judulJadi}</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 text-xs">
+              <div class="p-3 rounded-xl bg-[#0B0D21]/80 border border-white/10">
+                <span class="font-bold text-yellow-400 block mb-1">Metode &amp; Pengujian:</span>
+                <span class="text-slate-300">${item.metode}</span>
+              </div>
+              <div class="p-3 rounded-xl bg-[#0B0D21]/80 border border-white/10">
+                <span class="font-bold text-indigo-400 block mb-1">Rumusan Masalah Utama:</span>
+                <span class="text-slate-300">${rumusanJadi}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.querySelectorAll('.btn-save-generated').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          await saveHistoryRecord('generator_judul', btn.dataset.judul, {
+            skor: 90,
+            catatan: `Metode: ${btn.dataset.metode}`
+          });
+          showToast('Judul berhasil disimpan ke riwayat Anda!', 'success');
+        });
+      });
+    });
+
+    // ==================== FITUR 2: KOREKTOR & EVALUATOR JUDUL ====================
+    document.getElementById('btn-koreksi-judul').addEventListener('click', () => {
+      const judul = document.getElementById('kor-input-judul').value.trim();
+      if (judul.length < 15) {
+        showToast('Masukkan draf judul yang lebih lengkap (minimal 15 karakter).', 'warning');
+        return;
+      }
+
+      const lower = judul.toLowerCase();
+      const words = judul.split(/\s+/).filter(Boolean);
+
+      // Kriteria Evaluasi Skripsi Teknik Informatika
+      const hasMethod = /(algoritma|metode|cnn|lstm|svm|random forest|k-means|naive bayes|saw|ahp|topsis|flutter|laravel|react|iot|mqtt|aes|rsa|owasp|bert|yolo|neural network|deep learning|machine learning|blockchain)/i.test(lower);
+      const hasAction = /(implementasi|rancang bangun|analisis|perbandingan|optimasi|deteksi|klasifikasi|prediksi|pengembangan|penerapan|sistem pendukung keputusan|keamanan)/i.test(lower);
+      const hasObject = /(pada|untuk|berbasis|studi kasus|di |terhadap)/i.test(lower);
+      const idealLength = words.length >= 10 && words.length <= 22;
+      const notTooGeneric = !/(sistem informasi penjualan berbasis web|aplikasi kasir|website profil)/i.test(lower);
+
+      let score = 40;
+      if (hasAction) score += 15;
+      if (hasMethod) score += 20;
+      if (hasObject) score += 10;
+      if (idealLength) score += 10;
+      if (notTooGeneric) score += 5;
+      score = Math.min(98, score);
+
+      const criteria = [
+        { ok: hasMethod, title: 'Kejelasan Metode / Algoritma TI', desc: hasMethod ? 'Mencantumkan metode/teknologi komputasi spesifik.' : 'Belum terlihat algoritma atau kerangka kerja komputasi yang diuji.' },
+        { ok: hasAction, title: 'Kata Kerja Penelitian Ilmiah', desc: hasAction ? 'Menggunakan kata kunci riset (Implementasi/Analisis/Optimasi).' : 'Gunakan awalan akademik seperti "Implementasi", "Analisis", atau "Optimasi".' },
+        { ok: hasObject, title: 'Kejelasan Objek & Batasan Kasus', desc: hasObject ? 'Memiliki konteks domain atau studi kasus.' : 'Tambahkan objek studi kasus spesifik agar ruang lingkup terukur.' },
+        { ok: idealLength, title: `Panjang Kata Efektif (${words.length} kata)`, desc: idealLength ? 'Panjang judul ideal (10–22 kata).' : 'Disarankan berkisar antara 10 hingga 22 kata agar padat dan informatif.' }
+      ];
+
+      // Generate 2 Saran Perbaikan
+      const cleanBase = judul.replace(/^(sistem informasi|aplikasi|pembuatan|website)\s+/i, '');
+      const saran1 = hasMethod
+        ? `Analisis Performa dan ${judul} dengan Evaluasi Metrik Kuantitatif`
+        : `Implementasi Algoritma Machine Learning dan RESTful API pada ${cleanBase} untuk Peningkatan Efisiensi Proses`;
+      const saran2 = `Rancang Bangun dan Pengujian Usability pada ${cleanBase} Menggunakan Arsitektur Modern Berbasis Cloud`;
+
+      lastKoreksiResult = { judul, score, saran1, saran2 };
+
+      document.getElementById('kor-result-box').classList.remove('hidden');
+      document.getElementById('kor-score-value').textContent = `${score}%`;
+      document.getElementById('kor-grade-label').textContent = score >= 80 ? 'Sangat Layak Diajukan' : (score >= 65 ? 'Layak dengan Penyempurnaan' : 'Perlu Penguatan Metode TI');
+
+      document.getElementById('kor-checklist').innerHTML = criteria.map(c => `
+        <div class="p-3.5 rounded-2xl bg-[#0B0D21]/80 border ${c.ok ? 'border-emerald-500/30' : 'border-amber-500/30'} flex items-start gap-3">
+          <i data-lucide="${c.ok ? 'check-circle-2' : 'alert-circle'}" class="w-5 h-5 ${c.ok ? 'text-emerald-400' : 'text-amber-400'} shrink-0 mt-0.5"></i>
+          <div>
+            <p class="text-xs font-extrabold text-white">${c.title}</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">${c.desc}</p>
+          </div>
+        </div>
+      `).join('');
+
+      document.getElementById('kor-suggestions').innerHTML = [saran1, saran2].map((s, i) => `
+        <div class="p-3.5 rounded-2xl bg-[#0B0D21] border border-white/10 flex items-center justify-between gap-3">
+          <p class="text-xs sm:text-sm font-semibold text-slate-200"><span class="text-yellow-400 font-extrabold mr-1.5">#${i + 1}</span> ${s}</p>
+          <button type="button" class="btn-copy-saran shrink-0 px-3 py-1.5 rounded-full bg-white/10 hover:bg-yellow-400 hover:text-slate-950 text-xs font-bold transition" data-text="${s.replace(/"/g, '&quot;')}">
+            Salin
+          </button>
+        </div>
+      `).join('');
+
+      document.querySelectorAll('.btn-copy-saran').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const temp = document.createElement('textarea');
+          temp.value = btn.dataset.text;
+          document.body.appendChild(temp);
+          temp.select();
+          document.execCommand('copy');
+          temp.remove();
+          showToast('Saran judul disalin ke clipboard!', 'success');
+        });
+      });
+
+      lucide.createIcons();
+    });
+
+    document.getElementById('btn-save-koreksi').addEventListener('click', async () => {
+      if (!lastKoreksiResult) return;
+      await saveHistoryRecord('koreksi_judul', lastKoreksiResult.judul, {
+        skor: lastKoreksiResult.score,
+        catatan: `Saran: ${lastKoreksiResult.saran1}`
+      });
+      showToast('Hasil koreksi judul disimpan ke riwayat!', 'success');
+    });
+
+    // ==================== FITUR 3: DETEKTOR WATERMARK & POLA AI SKRIPSI ====================
+    const aiTextarea = document.getElementById('ai-input-text');
+    aiTextarea.addEventListener('input', () => {
+      const txt = aiTextarea.value;
+      const words = txt.trim() ? txt.trim().split(/\s+/).length : 0;
+      document.getElementById('ai-char-count').textContent = `${txt.length} karakter | ${words} kata`;
+    });
+
+    document.getElementById('btn-sample-ai-text').addEventListener('click', () => {
+      // Menyisipkan karakter zero-width (\u200B, \u200C) dan frasa khas LLM untuk pengujian nyata
+      const sample = "Dalam era\u200B transformasi digital yang\u200C terus berkembang pesat, penelitian ini\u200B bertujuan untuk mengoptimalkan\u200D klasifikasi data secara komprehensif. Lebih lanjut, pendekatan ini tidak hanya meningkatkan akurasi—tetapi juga menghadirkan solusi inovatif yang signifikan bagi pengembangan sistem cerdas di masa depan\u200B.";
+      aiTextarea.value = sample;
+      aiTextarea.dispatchEvent(new Event('input'));
+      showToast('Contoh teks dengan watermark tersembunyi dimuat.', 'info');
+    });
+
+    document.getElementById('btn-scan-ai').addEventListener('click', () => {
+      const text = aiTextarea.value;
+      if (!text.trim()) {
+        showToast('Tempel teks skripsi terlebih dahulu untuk dipindai.', 'warning');
+        return;
+      }
+
+      // 1. Deteksi karakter Unicode tersembunyi (Zero-Width Watermarks)
+      const zeroWidthRegex = /[\u200B\u200C\u200D\uFEFF\u2060\u180E]/g;
+      const hiddenMatches = text.match(zeroWidthRegex) || [];
+      const hiddenCount = hiddenMatches.length;
+
+      // 2. Deteksi pola frasa klise & struktur tanda baca khas LLM
+      const llmPatterns = [
+        /dalam era (transformasi )?digital/gi,
+        /terus berkembang pesat/gi,
+        /secara komprehensif/gi,
+        /tidak hanya .* tetapi juga/gi,
+        /lebih lanjut,/gi,
+        /oleh karena itu, sangat penting/gi,
+        /kesimpulannya,/gi,
+        /peran krusial/gi,
+        /lanskap teknologi/gi,
+        /—/g // Em-dash berlebihan khas output GPT
+      ];
+
+      let patternHits = 0;
+      const foundPhrases = [];
+      llmPatterns.forEach(rx => {
+        const m = text.match(rx);
+        if (m) {
+          patternHits += m.length;
+          foundPhrases.push(m[0]);
+        }
+      });
+
+      // Hitung skor probabilitas AI
+      let aiProb = Math.min(99, (hiddenCount * 15) + (patternHits * 14));
+      if (hiddenCount === 0 && patternHits === 0) aiProb = 8;
+
+      lastAiScanResult = {
+        snippet: text.slice(0, 120) + (text.length > 120 ? '...' : ''),
+        aiProb,
+        hiddenCount,
+        patternHits
+      };
+
+      document.getElementById('ai-result-panel').classList.remove('hidden');
+      document.getElementById('ai-prob-score').textContent = `${aiProb}%`;
+      document.getElementById('ai-prob-score').className = `text-3xl font-extrabold mt-1 ${aiProb >= 50 ? 'text-rose-400' : 'text-emerald-400'}`;
+      document.getElementById('ai-prob-label').textContent = aiProb >= 50 ? 'Terindikasi Kuat AI / Watermark' : 'Relatif Alami / Aman';
+
+      document.getElementById('ai-watermark-count').textContent = hiddenCount;
+      document.getElementById('ai-cliche-count').textContent = patternHits;
+
+      const detailEl = document.getElementById('ai-findings-detail');
+      detailEl.innerHTML = `
+        <p class="font-bold text-white">Rincian Temuan Forensik Teks:</p>
+        <ul class="list-disc pl-5 space-y-1 text-xs text-slate-300">
+          <li><strong>Karakter Watermark Unicode:</strong> Ditemukan <span class="text-yellow-400 font-bold">${hiddenCount} karakter tak terlihat</span> (U+200B Zero-Width Space / U+200C / U+200D) yang sering disisipkan saat menyalin teks dari generator AI.</li>
+          <li><strong>Pola Frasa &amp; Sintaksis LLM:</strong> Ditemukan <span class="text-indigo-400 font-bold">${patternHits} indikator gaya bahasa AI</span> ${foundPhrases.length ? `(${[...new Set(foundPhrases)].join(', ')})` : ''}.</li>
+          <li><strong>Rekomendasi:</strong> ${hiddenCount > 0 ? 'Klik tombol "Bersihkan Watermark" di bawah untuk menghapus karakter Unicode tersembunyi, lalu parafrase kalimat klise secara mandiri.' : 'Tidak ditemukan watermark Unicode tersembunyi. Tetap pastikan sitasi referensi valid.'}</li>
+        </ul>
+      `;
+    });
+
+    document.getElementById('btn-clean-watermark').addEventListener('click', () => {
+      const cleaned = aiTextarea.value.replace(/[\u200B\u200C\u200D\uFEFF\u2060\u180E]/g, '');
+      aiTextarea.value = cleaned;
+      aiTextarea.dispatchEvent(new Event('input'));
+
+      const temp = document.createElement('textarea');
+      temp.value = cleaned;
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand('copy');
+      temp.remove();
+
+      showToast('Watermark Unicode tersembunyi dihapus & teks bersih disalin!', 'success');
+    });
+
+    document.getElementById('btn-save-ai-scan').addEventListener('click', async () => {
+      if (!lastAiScanResult) return;
+      const originalityScore = Math.max(0, 100 - lastAiScanResult.aiProb);
+      await saveHistoryRecord('deteksi_ai', lastAiScanResult.snippet, {
+        skor: originalityScore,
+        catatan: `Indikasi AI: ${lastAiScanResult.aiProb}%, Watermark Unicode: ${lastAiScanResult.hiddenCount}`
+      });
+      showToast('Laporan pemindaian AI disimpan ke riwayat!', 'success');
+    });
+
+    // ==================== FITUR 4: KEAMANAN AKUN (2FA / MFA) ====================
+    async function renderMfaSection() {
+      if (!currentUser) return;
+      const container = document.getElementById('mfa-setup-container');
+      const pill = document.getElementById('mfa-pill-indicator');
+
+      if (currentUser.mfaEnabled) {
+        pill.textContent = 'AKTIF';
+        pill.className = 'inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-extrabold bg-emerald-500/20 text-emerald-400';
+      } else {
+        pill.textContent = 'NONAKTIF';
+        pill.className = 'inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-extrabold bg-rose-500/20 text-rose-400';
+      }
+
+      if (currentUser.role === 'mahasiswa') {
+        container.innerHTML = `
+          <div class="p-5 rounded-2xl bg-[#0B0D21]/80 border border-white/10 space-y-4">
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Sebagai Mahasiswa S1 TI, Anda dapat mengamankan akun dengan <strong>PIN Keamanan 2FA 6-Digit</strong> yang akan diminta setiap kali masuk menggunakan NIM.
+            </p>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-end gap-3 max-w-md">
+              <div class="flex-1">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Atur PIN 2FA Baru (6 Angka)</label>
+                <input type="text" id="setup-mhs-pin" maxlength="6" pattern="[0-9]{6}" value="${currentUser.mfaSecret || ''}" placeholder="Contoh: 654321" class="w-full px-4 py-3 rounded-2xl bg-[#161B3D] border border-white/15 text-sm font-bold tracking-widest text-yellow-400 focus:outline-none focus:border-yellow-400" />
+              </div>
+              <button id="btn-save-mhs-2fa" class="px-5 py-3 rounded-full bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-extrabold text-xs transition">
+                ${currentUser.mfaEnabled ? 'Perbarui PIN 2FA' : 'Aktifkan 2FA'}
+              </button>
+            </div>
+            ${currentUser.mfaEnabled ? `
+              <div class="pt-2">
+                <button id="btn-disable-mhs-2fa" class="text-xs font-bold text-rose-400 hover:underline">Nonaktifkan 2FA pada akun ini</button>
+              </div>
+            ` : ''}
+          </div>
+        `;
+
+        document.getElementById('btn-save-mhs-2fa').addEventListener('click', async () => {
+          const pin = document.getElementById('setup-mhs-pin').value.trim();
+          if (!/^\d{6}$/.test(pin)) {
+            showToast('PIN 2FA harus terdiri dari tepat 6 digit angka!', 'warning');
+            return;
+          }
+          if (IS_PREVIEW) {
+            const idx = previewStore.mahasiswa.findIndex(m => m.nim === currentUser.identifier);
+            if (idx > -1) {
+              previewStore.mahasiswa[idx].mfa_enabled = true;
+              previewStore.mahasiswa[idx].mfa_secret = pin;
+            }
+          } else if (supabase) {
+            const { error } = await supabase
+              .from('mahasiswa')
+              .update({ mfa_enabled: true, mfa_secret: pin })
+              .eq('nim', currentUser.identifier);
+            if (error) {
+              showToast('Gagal mengaktifkan 2FA: ' + error.message, 'error');
+              return;
+            }
+          }
+          currentUser.mfaEnabled = true;
+          currentUser.mfaSecret = pin;
+          updateUserUI();
+          renderMfaSection();
+          showToast('2FA PIN berhasil diaktifkan!', 'success');
+        });
+
+        document.getElementById('btn-disable-mhs-2fa')?.addEventListener('click', async () => {
+          const ok = await showConfirm('Nonaktifkan 2FA?', 'Keamanan akun Anda akan berkurang jika 2FA dinonaktifkan.');
+          if (!ok) return;
+          if (IS_PREVIEW) {
+            const idx = previewStore.mahasiswa.findIndex(m => m.nim === currentUser.identifier);
+            if (idx > -1) {
+              previewStore.mahasiswa[idx].mfa_enabled = false;
+              previewStore.mahasiswa[idx].mfa_secret = null;
+            }
+          } else if (supabase) {
+            await supabase
+              .from('mahasiswa')
+              .update({ mfa_enabled: false, mfa_secret: null })
+              .eq('nim', currentUser.identifier);
+          }
+          currentUser.mfaEnabled = false;
+          currentUser.mfaSecret = null;
+          updateUserUI();
+          renderMfaSection();
+          showToast('2FA telah dinonaktifkan.', 'info');
+        });
+      } else {
+        // Admin TOTP MFA Setup via Supabase Auth
+        container.innerHTML = `
+          <div class="p-5 rounded-2xl bg-[#0B0D21]/80 border border-white/10 space-y-4">
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Akun Admin menggunakan standar <strong>TOTP Authenticator App</strong> (Google Authenticator / Authy) melalui Supabase Multi-Factor Authentication.
+            </p>
+            <div class="flex flex-wrap gap-3">
+              <button id="btn-enroll-admin-mfa" class="px-5 py-2.5 rounded-full bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-extrabold text-xs transition">
+                Daftarkan Perangkat Authenticator (QR TOTP)
+              </button>
+            </div>
+            <div id="admin-mfa-qr-box" class="hidden pt-4 border-t border-white/10 space-y-4"></div>
+          </div>
+        `;
+
+        document.getElementById('btn-enroll-admin-mfa').addEventListener('click', async () => {
+          const qrBox = document.getElementById('admin-mfa-qr-box');
+          qrBox.classList.remove('hidden');
+
+          if (IS_PREVIEW) {
+            qrBox.innerHTML = `
+              <div class="flex flex-col sm:flex-row items-center gap-5">
+                <img src="https://placehold.co/160x160/FFFFFF/0B0D21?text=QR+TOTP+DEMO" alt="QR Code Preview" class="w-36 h-36 rounded-2xl border border-white/20" />
+                <div class="space-y-2 text-xs">
+                  <p class="font-bold text-yellow-400">Simulasi QR Code TOTP (Mode Preview)</p>
+                  <p class="text-slate-300">Secret Key: <code class="bg-black/40 px-2 py-1 rounded text-emerald-400">JBSWY3DPEHPK3PXP</code></p>
+                  <p class="text-slate-400">Saat deploy dengan <code>IS_PREVIEW = false</code>, QR Code SVG asli dari Supabase Auth MFA akan muncul otomatis di sini.</p>
+                </div>
+              </div>
+            `;
+            return;
+          }
+
+          if (!supabase) return;
+          const { data, error } = await supabase.auth.mfa.enroll({ factorType: 'totp' });
+          if (error) {
+            showToast('Gagal membuat faktor MFA: ' + error.message, 'error');
+            return;
+          }
+
+          qrBox.innerHTML = `
+            <div class="flex flex-col sm:flex-row items-center gap-5">
+              <div class="bg-white p-3 rounded-2xl">${data.totp.qr_code}</div>
+              <div class="space-y-3 text-xs flex-1">
+                <p class="font-bold text-white">1. Pindai QR Code di aplikasi Google Authenticator / Authy</p>
+                <p class="text-slate-400">Atau masukkan Secret Key manual: <code class="text-yellow-400 font-bold">${data.totp.secret}</code></p>
+                <div class="flex gap-2 max-w-xs">
+                  <input type="text" id="verify-enroll-code" maxlength="6" placeholder="Kode 6-digit" class="px-3 py-2 rounded-xl bg-[#161B3D] border border-white/20 text-white font-bold tracking-widest" />
+                  <button id="btn-confirm-enroll" class="px-4 py-2 rounded-full bg-emerald-400 text-slate-950 font-extrabold">Verifikasi</button>
+                </div>
+              </div>
+            </div>
+          `;
+
+          document.getElementById('btn-confirm-enroll').addEventListener('click', async () => {
+            const code = document.getElementById('verify-enroll-code').value.trim();
+            const { data: chal, error: cErr } = await supabase.auth.mfa.challenge({ factorId: data.id });
+            if (cErr) return showToast(cErr.message, 'error');
+            const { error: vErr } = await supabase.auth.mfa.verify({ factorId: data.id, challengeId: chal.id, code });
+            if (vErr) return showToast('Kode salah: ' + vErr.message, 'error');
+            currentUser.mfaEnabled = true;
+            updateUserUI();
+            renderMfaSection();
+            showToast('MFA Authenticator Admin aktif!', 'success');
+          });
+        });
+      }
+
+      // Load Security Logs Table
+      await loadSecurityLogs();
+    }
+
+    async function loadSecurityLogs() {
+      let logs = [];
+      if (IS_PREVIEW) {
+        logs = currentUser.role === 'admin'
+          ? previewStore.log_keamanan
+          : previewStore.log_keamanan.filter(l => l.user_identifier === currentUser.identifier);
+      } else if (supabase) {
+        let q = supabase.from('log_keamanan').select('*').order('created_at', { ascending: false }).limit(15);
+        if (currentUser.role !== 'admin') q = q.eq('user_identifier', currentUser.identifier);
+        const { data } = await q;
+        logs = data || [];
+      }
+
+      const tbody = document.getElementById('security-logs-tbody');
+      if (!logs.length) {
+        tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-slate-500">Belum ada log aktivitas keamanan.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = logs.map(l => `
+        <tr class="hover:bg-white/5">
+          <td class="py-3 px-3 font-bold text-white">${l.user_identifier}</td>
+          <td class="py-3 px-3 uppercase text-[10px] font-bold text-indigo-300">${l.role}</td>
+          <td class="py-3 px-3">${l.metode_verifikasi}</td>
+          <td class="py-3 px-3">
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${l.status === 'Berhasil' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}">${l.status}</span>
+          </td>
+          <td class="py-3 px-3 text-slate-400">${formatDate(l.created_at)}</td>
+        </tr>
+      `).join('');
+    }
+
+    // ==================== FITUR 5: MANAJEMEN MAHASISWA (KHUSUS ADMIN) ====================
+    document.getElementById('btn-open-add-mhs').addEventListener('click', () => {
+      document.getElementById('form-add-mhs-card').classList.remove('hidden');
+    });
+    document.getElementById('btn-cancel-add-mhs').addEventListener('click', () => {
+      document.getElementById('form-add-mhs-card').classList.add('hidden');
+    });
+
+    document.getElementById('form-create-mahasiswa').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const newMhs = {
+        nim: document.getElementById('new-mhs-nim').value.trim(),
+        nama_lengkap: document.getElementById('new-mhs-nama').value.trim(),
+        password: document.getElementById('new-mhs-pass').value.trim(),
+        peminatan: document.getElementById('new-mhs-peminatan').value,
+        mfa_enabled: false,
+        mfa_secret: null
+      };
+
+      if (IS_PREVIEW) {
+        previewStore.mahasiswa.unshift({ id: crypto.randomUUID(), ...newMhs, created_at: new Date().toISOString() });
+      } else if (supabase) {
+        const { error } = await supabase.from('mahasiswa').insert([newMhs]);
+        if (error) {
+          showToast('Gagal menambah mahasiswa: ' + error.message, 'error');
+          return;
+        }
+      }
+
+      e.target.reset();
+      document.getElementById('form-add-mhs-card').classList.add('hidden');
+      await loadAdminMahasiswaTable();
+      showToast('Akun mahasiswa berhasil ditambahkan!', 'success');
+    });
+
+    async function loadAdminMahasiswaTable() {
+      let list = [];
+      if (IS_PREVIEW) {
+        list = previewStore.mahasiswa;
+      } else if (supabase) {
+        const { data } = await supabase.from('mahasiswa').select('*').order('created_at', { ascending: false });
+        list = data || [];
+      }
+
+      const tbody = document.getElementById('admin-mahasiswa-tbody');
+      if (!list.length) {
+        tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400">Belum ada data mahasiswa terdaftar.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(m => `
+        <tr class="hover:bg-white/5">
+          <td class="py-3.5 px-3 font-extrabold text-yellow-400">${m.nim}</td>
+          <td class="py-3.5 px-3 font-bold text-white">${m.nama_lengkap}</td>
+          <td class="py-3.5 px-3 text-slate-300">${m.peminatan}</td>
+          <td class="py-3.5 px-3">
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${m.mfa_enabled ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-700 text-slate-300'}">
+              ${m.mfa_enabled ? '2FA Aktif' : 'Nonaktif'}
+            </span>
+          </td>
+          <td class="py-3.5 px-3 text-right space-x-2">
+            ${m.mfa_enabled ? `<button data-reset-mfa="${m.id}" class="px-3 py-1 rounded-full bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-[11px] font-bold transition">Reset 2FA</button>` : ''}
+            <button data-del-mhs="${m.id}" class="px-3 py-1 rounded-full bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 text-[11px] font-bold transition">Hapus</button>
+          </td>
+        </tr>
+      `).join('');
+
+      document.querySelectorAll('[data-reset-mfa]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = btn.dataset.resetMfa;
+          if (IS_PREVIEW) {
+            const target = previewStore.mahasiswa.find(x => x.id === id);
+            if (target) { target.mfa_enabled = false; target.mfa_secret = null; }
+          } else if (supabase) {
+            await supabase.from('mahasiswa').update({ mfa_enabled: false, mfa_secret: null }).eq('id', id);
+          }
+          await loadAdminMahasiswaTable();
+          showToast('2FA mahasiswa berhasil di-reset.', 'info');
+        });
+      });
+
+      document.querySelectorAll('[data-del-mhs]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const ok = await showConfirm('Hapus Akun Mahasiswa?', 'Data akun mahasiswa ini akan dihapus permanen.');
+          if (!ok) return;
+          const id = btn.dataset.delMhs;
+          if (IS_PREVIEW) {
+            previewStore.mahasiswa = previewStore.mahasiswa.filter(x => x.id !== id);
+          } else if (supabase) {
+            await supabase.from('mahasiswa').delete().eq('id', id);
+          }
+          await loadAdminMahasiswaTable();
+          showToast('Akun mahasiswa dihapus.', 'success');
+        });
+      });
+    }
+
+    // Boot Application
+    initEnvironment();
+  </script>
+</body>
+</html>
